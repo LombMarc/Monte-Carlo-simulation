@@ -1,0 +1,42 @@
+import pandas as pd
+import numpy as np
+import random
+import scipy.stats
+from scipy.stats import norm
+import matplotlib.pyplot as plt
+
+i=0
+number_of_simulation = 10
+drift_rate = 0.017
+variance_rate = 0.011
+last_vol = 0.044
+
+'''
+tenendo conto che stiamo analizzando frame temporali di 20 giorni(in quanto abbimo stimato volatilità sulle sedute di un mese)
+prendiamo in considerazione intervalli di tempo giornalieri, ossia 1/20 T
+'''
+
+fig=plt.figure()
+ax= fig.add_subplot(1,1,1)
+ax.spines['top'].set_color('none')
+ax.spines['right'].set_color('none')
+#ax.spines['left'].set_position('zero')
+
+
+t1= np.linspace(0,20,21)
+x1=0
+Monte_carlo_volatility1 =[0.044]
+i=0
+for i in range(0,number_of_simulation):
+    while x1<20:
+        vol_var = last_vol*drift_rate*(1/20)+last_vol*variance_rate*np.sqrt(1/20)*norm.ppf(random.random())
+        last_vol+=vol_var
+        x1+=1
+        Monte_carlo_volatility1.append(last_vol)
+    i+=1
+plt.plot(t1,Monte_carlo_volatility1)
+plt.show()
+'''
+se riproduciamo più volte queste ultime linee di codice otteniamo unasimulazione montecarlo, 
+dovremmo però riprodurre più volte il codice non automatizzandolo
+'''
