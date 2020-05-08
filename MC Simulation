@@ -1,0 +1,30 @@
+import scipy as sp
+import matplotlib.pyplot as plt
+import numpy as np
+last_volatility = 0.044
+T = 1/12
+n_steps = 20
+drift_rate = 0.017
+variance_rate= 0.011
+
+
+n_simulation =50
+dt = T/n_steps
+s= np.zeros([n_steps], dtype = float)
+x = range(0,int(n_steps),1)
+for j in range(0,n_simulation):  #indica il numero di volte in cui riprodurre la simulazione
+    s[0]=last_volatility
+    for i in x[:-1]:  #identifica l'intervallo entro cui calcolare ogni step del processo
+        e=sp.random.normal()  #è la distribuzione 
+        s[i+1]=s[i]+s[i]*(drift_rate)*dt+variance_rate*s[i]*np.sqrt(dt)*e; 
+        '''
+        questo indica la formula di calcolo delle vaiazioni sul sottostante definendo il valore successivo 
+        come il valore di base a cui viene aggiunta la variazione istantanea al dt del processo di Wiener generalizzato
+        si può utilizzare per qualsiasi fenomeno soggetto a fluttuazioni nel tempo (quindi che si affianchi ad un processo stocastico
+        '''
+    plt.plot(x,s)
+# è importante indentare correttamente il plot per evitare di ottenere un grafico confuso in cui per ogni step ci sia un chart he tenda a 0
+
+
+
+plt.show()
