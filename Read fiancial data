@@ -1,0 +1,25 @@
+import datetime as dt
+import numpy as np
+import pandas_datareader.data as web
+
+
+start = dt.datetime(2015,5,7)
+end = dt.datetime(2020,5,8)
+# definiamo l'intervallo temporale in cui ercare i dati
+df = web.DataReader ('ATL.MI','yahoo', start, end)
+# al termine della parentesi possiamo definire l'unica colonna da visionare (es. ['Adj Close'] etc
+df['Return'] = df['Adj Close'].pct_change()
+#affianchiamo una nuova colonna al dataset, con cui si individua la variazione di percentuale di prezzo.
+#possiamo individuare il ritorno percentuale anche sotto forma logaritmica con df['log Return'] = np.log(df['Adj Close']) - np.log(df['Adj Close'].iloc[0])
+
+df['monthly volatility']= df['Return'].rolling(window = 20, min_periods=0).std()
+drift_rate= df['monthly volatility'].mean()
+variance_rate= df['monthly volatility'].std()
+print(df['monthly volatility'])
+#df.plot(y= '30 day volatility')
+price= df['monthly volatility'].to_list()
+last_vol = price[-1]
+
+print(drift_rate)
+print(variance_rate)
+print(last_vol)
