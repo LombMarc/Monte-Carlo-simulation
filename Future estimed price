@@ -1,0 +1,40 @@
+import datetime as dt
+import numpy as np
+import pandas_datareader.data as web
+import matplotlib.pyplot as plt
+import scipy as sp
+
+
+start = dt.datetime(2015,12,5)
+end = dt.datetime(2020,5,5)
+
+df = web.DataReader ('CL=F','yahoo', start, end)
+df['log Return'] = np.log(df['Adj Close']) - np.log(df['Adj Close'].iloc[0])
+
+drift_rate= df['log Return'].mean()
+variance_rate= df['log Return'].std()
+Prices = df['Adj Close'].to_list()
+Current_p = Prices[-1]
+
+T = 1
+n_steps = 100
+n_simulation = 100
+dt = T/n_steps
+
+s= np.zeros([n_steps], dtype = float)
+x = range(0,int(n_steps),1)
+for j in range(0,n_simulation):
+    s[0]=Current_p
+    for i in x[:-1]:
+        e=sp.random.normal()
+        s[i+1]=s[i]+s[i]*(drift_rate)*dt+variance_rate*s[i]*np.sqrt(dt)*e;
+    plt.plot(x,s)
+
+
+plt.xlabel('Considered steps ='+ str(int(n_steps)))
+plt.ylabel('Stock price')
+
+average_price = np.average(s)
+print('avarage maturity price', average_price)
+
+plt.show()
